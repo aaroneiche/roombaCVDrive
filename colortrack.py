@@ -5,14 +5,21 @@ import numpy as np              #importing libraries
 cap = cv2.VideoCapture(1)       #creating camera object
 import heapq
 
-# lower = (54, 66, 180)
+# lower = (54, 66, 180) # Daylight lower range for pink Wilson Raquet balls.
 lower = (157,112,69)
 upper = (185, 255, 255)
+
+def drawFeedbackCircles(contour,image):
+    ((x, y), radius) = cv2.minEnclosingCircle(contour)
+    M = cv2.moments(contour)
+    center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+    cv2.circle(image, (int(x), int(y)), int(radius),(255, 0, 0), 3)
+
 
 
 while( cap.isOpened() ) :
     ret,img = cap.read()        #reading the frames
-    img = cv2.flip(img,1)
+    img = cv2.flip(img,1)       #mirror the image.
 
     hsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv,lower,upper)
@@ -29,20 +36,9 @@ while( cap.isOpened() ) :
 
         # Make sure the contours we're looking at are big enough to be matching balls.
         if cv2.contourArea(c1) > 600 and cv2.contourArea(c2) > 600:
-            ((x1, y1), radius1) = cv2.minEnclosingCircle(c1)
-            ((x2, y2), radius2) = cv2.minEnclosingCircle(c2)
 
-
-            M1 = cv2.moments(c1)
-            center1 = (int(M1["m10"] / M1["m00"]), int(M1["m01"] / M1["m00"]))
-
-            M2 = cv2.moments(c2)
-            center2 = (int(M2["m10"] / M2["m00"]), int(M2["m01"] / M2["m00"]))
-
-            #draw matching circles.
-            cv2.circle(img, (int(x1), int(y1)), int(radius1),(255, 0, 0), 3)
-            cv2.circle(img, (int(x2), int(y2)), int(radius2),(0, 255, 0), 3)
-
+            drawFeedbackCircles(c1,img)
+            drawFeedbackCircles(c2,img)
 
     cv2.imshow('input',img)     #displaying the frames
 
