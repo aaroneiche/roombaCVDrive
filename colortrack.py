@@ -11,8 +11,9 @@ upper = (185, 255, 255)
 
 def drawFeedbackCircles(contour,image):
     ((x, y), radius) = cv2.minEnclosingCircle(contour)
-    M = cv2.moments(contour)
-    center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+    orientation = "R" if x > 600 else "L"
+
+    cv2.putText(image, str(int(radius)), (int(x),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 2,(127,127,0),3)
     cv2.circle(image, (int(x), int(y)), int(radius),(255, 0, 0), 3)
 
 
