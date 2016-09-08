@@ -5,6 +5,17 @@ import numpy as np              #importing libraries
 cap = cv2.VideoCapture(1)       #creating camera object
 import heapq
 
+from RoombaSCI import RoombaAPI
+
+#Initialize Roomba
+roomba = RoombaAPI("/dev/tty.FireFly-E812-SPP",115200);
+if roomba:
+    roomba.start()
+    roomba.safe()
+
+
+
+
 # lower = (54, 66, 180) # Daylight lower range for pink Wilson Raquet balls.
 lower = (157,112,69)
 upper = (185, 255, 255)
@@ -15,8 +26,6 @@ def drawFeedbackCircles(contour,image):
 
     cv2.putText(image, str(int(radius)), (int(x),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 2,(127,127,0),3)
     cv2.circle(image, (int(x), int(y)), int(radius),(255, 0, 0), 3)
-
-
 
 while( cap.isOpened() ) :
     ret,img = cap.read()        #reading the frames
